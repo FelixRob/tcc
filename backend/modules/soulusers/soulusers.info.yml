@@ -1,0 +1,13 @@
+name: Soul User Support
+description: Login support for the JSON:API module.
+type: module
+package: Soul
+core_version_requirement: ^9.1 || ^10
+dependencies:
+  - openapi:openapi
+  - drupal:user
+
+# Information added by Drupal.org packaging script on 2022-12-08
+version: '1.0.1'
+project: 'soulusers'
+datestamp: 1670513666

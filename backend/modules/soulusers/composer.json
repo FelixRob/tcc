@@ -1,0 +1,17 @@
+{
+    "name": "drupal/soulusers",
+    "description": "Login support for the JSON:API module.",
+    "type": "drupal-module",
+    "require": {
+        "drupal/openapi": "^2",
+        "drupal/schemata": "^1"
+    },
+    "minimum-stability": "dev",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Felix R",
+            "email": "soul@soul.art.br"
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function friendship_schema() {
+  $schema['friendship'] = [
+    'description' => 'Stores friendship data between users.',
+    'fields' => [
+      'id' => [
+        'description' => 'Primary key.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'level' => [
+        'description' => 'Level of friendship. 0 - request / 1 - friends / 2 -bff',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'uid_1' => [
+        'description' => 'User ID of one friend.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid_2' => [
+        'description' => 'User ID of the other friend.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'from_date' => [
+        'description' => 'Date when the friendship started.',
+        'type' => 'datetime',
+        'mysql_type' => 'DATETIME',
+        'not null' => TRUE,
+      ],
+      'update_date' => [
+        'description' => 'Date when the friendship was updated.',
+        'type' => 'datetime',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'uid_1' => [
+        'uid_1',
+      ],
+      'uid_2' => [
+        'uid_2',
+      ],
+    ],
+  ];
+
+  return $schema;
+}

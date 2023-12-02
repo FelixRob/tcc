@@ -1,0 +1,80 @@
+<?php
+
+use Drupal\field\Entity\FieldStorageConfig;
+/**
+ * Implements hook_install().
+ */
+function soulusers_install() {
+    // Adicionar campo 'first_name'
+    soulusers_add_user_field('first_name', 'First Name', 'string');
+
+    // Adicionar campo 'last_name'
+    soulusers_add_user_field('last_name', 'Last Name', 'string');
+
+    // Adicionar campo 'birthday'
+    soulusers_add_user_field('birthday', 'Birthday', 'datetime');
+
+    // Adicionar campo 'gender'
+    soulusers_add_user_field('gender', 'Gender', 'list_string', [
+        'Male' => 'Male',
+        'Female' => 'Female',
+        'Other' => 'Other',
+    ]);
+}
+
+/**
+ * Helper function to add a field to user entity.
+ */
+function soulusers_add_user_field($field_name, $label, $field_type, $allowed_values = []) {
+    $field_storage = FieldStorageConfig::loadByName('user', $field_name);
+    if (!$field_storage) {
+        $field_storage = FieldStorageConfig::create([
+            'entity_type' => 'user',
+            'field_name' => $field_name,
+            'type' => $field_type,
+        ]);
+
+        // Tradução das opções para o campo list_string
+        if ($field_type === 'list_string' && !empty($allowed_values)) {
+            $translated_values = [];
+            foreach ($allowed_values as $key => $value) {
+                $translated_values[$key] = t($value);
+            }
+            $field_storage->setSettings(['allowed_values' => $translated_values]);
+        }
+
+        $field_storage->save();
+    }
+
+    $field = \Drupal\field\Entity\FieldConfig::loadByName('user', 'user', $field_name);
+    if (!$field) {
+        $field = \Drupal\field\Entity\FieldConfig::create([
+            'entity_type' => 'user',
+            'field_name' => $field_name,
+            'bundle' => 'user',
+            'label' => t($label),
+            'required' => FALSE,
+        ]);
+
+        $field->save();
+
+      // Configurações de exibição do formulário
+      $entity_type_manager = \Drupal::entityTypeManager();
+      $form_display = $entity_type_manager->getStorage('entity_form_display')
+        ->load('user.user.default');
+
+      if ($form_display) {
+        $form_display->setComponent($field_name, ['type' => 'string_textfield'])
+          ->save();
+      }
+
+      // Configurações de exibição da entidade
+      $view_display = $entity_type_manager->getStorage('entity_view_display')
+        ->load('user.user.default');
+
+      if ($view_display) {
+        $view_display->setComponent($field_name, ['type' => 'string'])
+          ->save();
+      }
+    }
+}

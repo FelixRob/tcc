@@ -1,0 +1,15 @@
+soulusers.profile:
+  path: '/soulapi/user/user/{entity}'
+  defaults:
+    _controller: '\Drupal\soulusers\Controller\EntityResourceController::getIndividual'
+  methods:
+    - GET
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'access content'
+    _format: 'json'
+  options:
+    parameters:
+      entity:
+        type: entity:user
+    no_cache: TRUE

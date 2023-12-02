@@ -1,0 +1,14 @@
+services:
+  # Subscriber to the event we dispatch in hook_user_login.
+#  soulusers.user_login:
+#    class: Drupal\soulusers\EventSubscriber\UserLoginSubscriber
+#    arguments: ['@messenger', '@date.formatter']
+#    tags:
+#      - { name: 'event_subscriber' }
+  soulusers.route_subscriber:
+    class: Drupal\soulusers\RestLoginAddonsRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  soulusers.entity_resource:
+    class: Drupal\soulusers\Controller\EntityResourceController
+    arguments: ['@entity_type.manager','@entity_field.manager', '@jsonapi.resource_type.repository', '@renderer', '@entity.repository', '@jsonapi.include_resolver', '@jsonapi.entity_access_checker', '@jsonapi.field_resolver', '@jsonapi.serializer', '@datetime.time', '@current_user']

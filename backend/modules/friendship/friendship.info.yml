@@ -1,0 +1,7 @@
+name: Soul Friendship
+type: module
+description: 'Custom module for managing user friendships.'
+package: Soul
+core_version_requirement: ^8 || ^9 || ^10
+dependencies:
+  - drupal:user

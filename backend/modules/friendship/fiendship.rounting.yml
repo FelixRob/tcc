@@ -1,0 +1,42 @@
+friendship.request:
+  path: '/friendship/request'
+  defaults:
+    _controller: '\Drupal\friendship\Controller\FriendshipController::requestFriendship'
+  methods:
+    - POST
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'access content'
+
+friendship.accept:
+  path: '/friendship/accept'
+  defaults:
+    _controller: '\Drupal\friendship\Controller\FriendshipController::acceptFriendship'
+  methods:
+    - POST
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'access content'
+
+friendship.reject:
+  path: '/friendship/reject'
+  defaults:
+    _controller: '\Drupal\friendship\Controller\FriendshipController::rejectFriendship'
+  methods:
+    - POST
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'access content'
+
+friendship.list:
+  path: '/friendship/list'
+  defaults:
+    _controller: '\Drupal\friendship\Controller\FriendshipController::listFriendships'
+  methods:
+    - GET
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _permission: 'access content'
+    _format: 'json'
+  options:
+    no_cache: TRUE
