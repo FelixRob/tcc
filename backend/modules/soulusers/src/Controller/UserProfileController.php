@@ -32,8 +32,8 @@ class UserProfileController extends ControllerBase {
         $currentUser = \Drupal::currentUser();
         $userId = $user->id();
 
-        if ($userId !== $currentUser->id() && !$this->checkFriendship($currentUser->id(), $userId)
-            && !$currentUser->hasPermission('administer users')) {
+        if (!$currentUser->hasPermission('administer users')
+            && $userId !== $currentUser->id() && !$this->checkFriendship($currentUser->id(), $userId)) {
             return new JsonResponse(['error' => 'Access denied'], 403);
         }
 
