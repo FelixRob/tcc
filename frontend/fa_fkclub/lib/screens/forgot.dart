@@ -31,12 +31,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     if (res['response_token'] != null) {
-      String accessToken = res['csrf_token'];
-      int userId = int.parse(res['current_user']['uid']);
-      String userFirstName = res['first_name'];
-      List<dynamic> userRoles = res["roles"];
-      String userUUID = res['uuid'];
-
       String okMessage = 'One temporary link was sent to your e-mail';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(okMessage),
@@ -46,7 +40,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => LoginScreen()));
+              builder: (context) => const LoginScreen()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${res['message']}'),

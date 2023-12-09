@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fa_fkclub/config/app_config.dart';
+import 'package:fa_fkclub/core/secure_storage.dart';
+import 'package:fa_fkclub/model/profile.dart';
+
 
 /// API Cliente exclusiva ao controle de usuários
 class ApiClient {
@@ -53,22 +56,33 @@ class ApiClient {
   }
   ///
   /// Get User Profile data
-  Future<dynamic> getUserProfileData(
-      String accessToken, int userId, String userUuid) async {
+  Future<dynamic> getUserProfileData(String accessToken, int userId, String userUuid) async {
+    final secureStorage = SecureStorage();
     String profileUrl = '${AppConfig.profileURL}/$userUuid';
     try {
       Response response = await _dio.get(
         profileUrl,
         queryParameters: {
-          //'apikey': AppConfig.apiKey,
           'token': accessToken,
         },
-        // options: Options(
-        //   headers: {'Authorization': 'Bearer $accessToken'},
-        // ),
+        options: Options(
+          headers: {
+            'X-CSRF-Token': accessToken, // Ou 'Authorization': 'Bearer $accessToken'
+            // Outros headers necessários
+          },
+        ),
       );
 
-      return response.data;
+      if (response.statusCode == 200) {
+        // Converte os dados da resposta em um objeto Profile
+        Profile userProfile = Profile.fromJson(response.data);
+        // Salva o perfil no SecureStorage
+        await secureStorage.saveProfile(userProfile);
+        return userProfile;
+      } else {
+        // Lida com respostas não bem-sucedidas
+        return null;
+      }
     } on DioError catch (e) {
       return e.response!.data;
     }

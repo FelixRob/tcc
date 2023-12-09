@@ -21,7 +21,13 @@ class UserProfileController extends ControllerBase {
      * @return Symfony\Component\HttpFoundation\JsonResponse
      *   The JSON response.
      */
-    public function getUserProfile(EntityInterface $user) {
+    public function getUserProfile(EntityInterface $user, Request $request) {
+        // Verificar se o token é válido
+        $token = $request->headers->get('Authorization');
+        if (!$this->validateToken($token)) {
+            return new JsonResponse(['error' => 'Access denied'], 403);
+        }
+
         if ($user instanceof User) {
             $data = [
                 'uid' => $user->id(),
@@ -38,4 +44,7 @@ class UserProfileController extends ControllerBase {
         return new JsonResponse(['error' => 'User not found'], 404);
     }
 
+    protected function validateToken($token) {
+        return \Drupal::csrfToken()->validate($token);
+    }
 }

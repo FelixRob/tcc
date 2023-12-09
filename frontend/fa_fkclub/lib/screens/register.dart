@@ -1,4 +1,3 @@
-import 'package:fa_fkclub/screens/forgot.dart';
 import 'package:flutter/material.dart';
 import 'package:fa_fkclub/core/api_client.dart';
 import 'package:fa_fkclub/screens/login.dart';
@@ -16,6 +15,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ApiClient _apiClient = ApiClient();
   bool _showPassword = false;
@@ -35,12 +35,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         ],
         "Password": passwordController.text,
-        "About": 'I am a new user :smile:',
-        "FirstName": "Test",
-        "LastName": "Account",
-        "FullName": "Test Account",
-        "BirthDate": "10-12-1985",
-        "Gender": "M",
+        "FirstName": firstNameController.text,
+        // Serao configuraveis
+        // A definir "LastName": "Test",
+        // A definir "BirthDate": "10-12-1985",
+        // A definir "Gender": "M",
       };
 
       dynamic res = await _apiClient.registerUser(userData);
@@ -104,7 +103,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     SizedBox(height: size.height * 0.05),
 
-                    //SizedBox(height: size.height * 0.03),
+                    // first name input
+                    TextFormField(
+                      validator: (value) =>
+                          Validator.validateName(value ?? ""),
+                      controller: firstNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: AppColors.fieldBg,
+                        hintText: "First Name",
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.03),
                     //
                     // email input
                     TextFormField(

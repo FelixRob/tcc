@@ -1,3 +1,4 @@
+import 'package:fa_fkclub/core/secure_storage.dart';
 import 'package:fa_fkclub/screens/forgot.dart';
 import 'package:flutter/material.dart';
 import 'package:fa_fkclub/core/api_client.dart';
@@ -18,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ApiClient _apiClient = ApiClient();
+  final secureStorage = SecureStorage();
+  
   bool _showPassword = false;
 
   Future<void> login() async {
@@ -41,19 +44,28 @@ class _LoginScreenState extends State<LoginScreen> {
       List<dynamic> userRoles = res["roles"];
       String userUUID = res['uuid'];
 
-      String okMessage = 'Welcome $userFirstName';
+      String okMessage = 'Welcome $userFirstName'; // message for login successful
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(okMessage),
         backgroundColor: AppColors.messageOK,
       ));
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomeScreen(
-                  accesstoken: accessToken,
-                  userId: userId,
-                  userUuid: userUUID)));
+      // Salvar dados no SecureStorage
+      await secureStorage.setUserId(userId as String);
+      await secureStorage.setUuid(userUUID);
+      await secureStorage.setCsrfToken(accessToken);
+
+      // navegar para home
+      if (mounted) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                    accesstoken: accessToken,
+                    userId: userId,
+                    userUuid: userUUID)));
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${res['message']}'),

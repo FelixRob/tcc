@@ -1,3 +1,5 @@
+import 'package:fa_fkclub/core/secure_storage.dart';
+import 'package:fa_fkclub/screens/friendlist.dart';
 import 'package:flutter/material.dart';
 import 'package:fa_fkclub/core/api_client.dart';
 import 'package:fa_fkclub/screens/login.dart';
@@ -30,26 +32,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> logout() async {
     await _apiClient.logout(widget.accesstoken);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    if (mounted) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }
   }
 
-  // Sample call
-  int _counter = 0;
+  @override
+  void initState() {
+    super.initState();
+    _checkUserActive();
+  }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void _checkUserActive() async {
+    final secureStorage = SecureStorage();
+    String? csrfToken = await secureStorage.getCsrfToken();
+    
+    // Verifica se o widget ainda está montado antes de proceder
+    if (mounted) {
+      if (csrfToken == null || csrfToken.isEmpty) {
+        // Não há usuário ativo, redirecionar para a tela de login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,10 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 }
-                String fullName = snapshot.data!['FullName'];
                 String firstName = snapshot.data!['FirstName'];
-                String lastName = snapshot.data!['LastName'];
-                String birthDate = snapshot.data!['BirthDate'];
+                String lastName = snapshot.data!['LastName'] ?? '';
+                String birthDate = snapshot.data!['BirthDate'] ?? '';
                 String email = snapshot.data!['Email'][0]['Value'];
                 String gender = snapshot.data!['Gender'];
 
@@ -118,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: Text(
-                              fullName,
+                              firstName,
                               style: const TextStyle(
                                   fontSize: 25,
                                   color: Colors.white,
@@ -273,10 +285,17 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           )),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: _openFriendList,
+        tooltip: 'Amigos',
+        child: const Icon(Icons.people),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  void _openFriendList() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FriendsListScreen()),
     );
   }
 }
