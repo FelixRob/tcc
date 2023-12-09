@@ -28,6 +28,15 @@ class UserProfileController extends ControllerBase {
             return new JsonResponse(['error' => 'Access denied'], 403);
         }
 
+        // Obter o usuário atual
+        $currentUser = \Drupal::currentUser();
+        $userId = $user->id();
+
+        if ($userId !== $currentUser->id() && !$this->checkFriendship($currentUser->id(), $userId)
+            && !$currentUser->hasPermission('administer users')) {
+            return new JsonResponse(['error' => 'Access denied'], 403);
+        }
+
         if ($user instanceof User) {
             $data = [
                 'uid' => $user->id(),
@@ -46,5 +55,28 @@ class UserProfileController extends ControllerBase {
 
     protected function validateToken($token) {
         return \Drupal::csrfToken()->validate($token);
+    }
+
+    /**
+     * Verifica se existe uma amizade entre dois usuários.
+     *
+     * @param int $userId1
+     *   ID do primeiro usuário.
+     * @param int $userId2
+     *   ID do segundo usuário.
+     *
+     * @return bool
+     *   Retorna TRUE se existir uma amizade, FALSE caso contrário.
+     */
+    protected function checkFriendship($userId1, $userId2) {
+        $query = \Drupal::database()->select('friendship', 'f');
+        $query->fields('f', ['fid']);  // Assumindo que 'fid' é o identificador da amizade
+        $query->condition('f.uid_1', $userId1, '=');
+        $query->condition('f.uid_2', $userId2, '=');
+        $query->condition('f.level', -1, '!=');
+        $query->range(0, 1);  // Limita a busca a um resultado
+
+        $result = $query->execute()->fetchField();
+        return !empty($result);  // Se encontrar uma amizade, retorna TRUE
     }
 }
