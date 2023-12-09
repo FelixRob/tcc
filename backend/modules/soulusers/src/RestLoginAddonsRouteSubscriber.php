@@ -18,13 +18,6 @@ class RestLoginAddonsRouteSubscriber extends RouteSubscriberBase {
         $route_login->setDefaults([
             '_controller' => '\Drupal\soulusers\Controller\RestLoginAddonsController::login',
         ]);
-
-//        $route_jsonResource = $collection->get('jsonapi.user--user.individual');
-//        if ($route_jsonResource) {
-//          $route_jsonResource->setDefaults([
-//            '_controller' => '\Drupal\soulusers\Controller\EntityResourceController:getIndividual',
-//          ]);
-//        }
     }
 
 }

@@ -13,3 +13,12 @@ soulusers.profile:
       entity:
         type: entity:user
     no_cache: TRUE
+
+soulusers.user_profile:
+  path: '/user/profile/{user}'
+  defaults:
+    _controller: '\Drupal\soulusers\Controller\UserProfileController::getUserProfile'
+    _title: 'User Profile'
+  requirements:
+    _permission: 'access content'
+  methods: [ GET ]
